@@ -1,25 +1,11 @@
 <launch>
+
+    <node name="camera1_throttle1" pkg="topic_tools" type="throttle" args="messages /realsense_torso_front_camera/color/image_raw 1.0"></node>
+    <node name="camera1_throttle2" pkg="topic_tools" type="throttle" args="messages /realsense_front_camera/color/image_raw 1.0"></node>
+    <node name="camera1_throttle3" pkg="topic_tools" type="throttle" args="messages /realsense_right_camera/color/image_raw 1.0"></node>
+    <node name="camera1_throttle4" pkg="topic_tools" type="throttle" args="messages /realsense_left_camera/color/image_raw 1.0"></node>
+
     <!-- Start the Task-Based Bag Recorder Node -->
     <node name="task_based_bag_recorder" pkg="my_bag_recorder" type="task_based_bag_recorder" output="screen"/>
 
-    <!-- Throttle camera topics to 1 FPS -->
-    <node pkg="topic_tools" type="throttle" name="throttle_cam1">
-        <param name="name" value="/cam1/color/image_raw"/>
-        <param name="rate" value="1.0"/>
-    </node>
-
-    <node pkg="topic_tools" type="throttle" name="throttle_cam2">
-        <param name="name" value="/cam2/color/image_raw"/>
-        <param name="rate" value="1.0"/>
-    </node>
-
-    <node pkg="topic_tools" type="throttle" name="throttle_cam3">
-        <param name="name" value="/cam3/color/image_raw"/>
-        <param name="rate" value="1.0"/>
-    </node>
-
-    <node pkg="topic_tools" type="throttle" name="throttle_cam4">
-        <param name="name" value="/cam4/color/image_raw"/>
-        <param name="rate" value="1.0"/>
-    </node>
 </launch>
