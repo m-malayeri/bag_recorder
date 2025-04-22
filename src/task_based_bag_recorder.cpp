@@ -11,6 +11,7 @@ private:
     std::string current_task_id;
     bool recording;
     pid_t rosbag_pid; // Process ID for rosbag
+    std::string save_path;
 
     // Topics to record
     std::vector<std::string> recorded_topics = {
@@ -27,8 +28,15 @@ private:
     };
 
 public:
-    BagRecorder() : recording(false), rosbag_pid(-1) {
+    BagRecorder(ros::NodeHandle& nh) : recording(false), rosbag_pid(-1) {
         task_sub = nh.subscribe("/task_executor/task/feedback", 10, &BagRecorder::taskCallback, this);
+        
+        if (nh.getParam("save_path", save_path)){
+            ROS_INFO("Save path: %s", save_path.c_str());
+        } else {
+            ROS_WARN("Failed to get save_path param, using default /home/bags");
+            save_path = "/home/bags/";
+        }
     }
 
     void startRecording(const std::string& task_id) {
@@ -39,7 +47,7 @@ public:
         ROS_INFO_STREAM("Starting bag recording: " << bag_filename << ".bag");
 
         // Construct the rosbag command
-        std::string command = "rosbag record -o /home/jovyan/bags/" + bag_filename;
+        std::string command = "rosbag record -o" + save_path + bag_filename;
         for (const auto& topic : recorded_topics) {
             command += " " + topic;
         }
@@ -87,7 +95,8 @@ public:
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "task_based_bag_recorder");
-    BagRecorder recorder;
+    ros::NodeHandle nh("~");
+    BagRecorder recorder(nh);
     ros::spin();
     return 0;
 }
