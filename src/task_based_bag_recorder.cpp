@@ -24,7 +24,8 @@ private:
         "/realsense_left_camera/color/image_raw_throttle",
         "/realsense_left_camera/color/camera_info",
         "/amcl_pose",
-        "/task_executor/task/feedback"
+        "/task_executor/task/feedback",
+        "/smart_wheel_driver/pdb/imu"
     };
 
 public:
