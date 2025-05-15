@@ -7,7 +7,7 @@
 
     <!-- Start the Task-Based Bag Recorder Node -->
     <node name="task_based_bag_recorder" pkg="my_bag_recorder" type="task_based_bag_recorder" output="screen">
-        <param name="save_path" value="/home/jovyan/bags/"/>
+        <param name="save_path" value="/home/bags/"/>
     </node>
 
 </launch>
