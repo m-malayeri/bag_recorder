@@ -7,7 +7,11 @@
 
     <!-- Start the Task-Based Bag Recorder Node -->
     <node name="task_based_bag_recorder" pkg="my_bag_recorder" type="task_based_bag_recorder" output="screen">
+<<<<<<< HEAD
         <param name="save_path" value="/home/jovyan/data/VPR/my_bags/"/>
+=======
+        <param name="save_path" value="/home/bags/"/>
+>>>>>>> 30e2f0a3de49ca9af7ba31b732c4a0b8afacccab
     </node>
 
 </launch>
