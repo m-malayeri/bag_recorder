@@ -112,108 +112,6 @@ def create_mat_files(input_txt_file, output_dir=".", pos_dist_thr=2):
         print(f"  Query images: {len(q_image_paths)}")
         print(f"  Total for {split_name}: {len(split_image_paths)}")
 
-def verify_mat_files(output_dir="."):
-    """
-    Verify all three created .mat files by loading and displaying their structure.
-    """
-    splits = ['train', 'val', 'test']
-    
-    print("\n" + "="*50)
-    print("VERIFICATION OF ALL SPLITS")
-    print("="*50)
-    
-    total_db_images = 0
-    total_query_images = 0
-    
-    for split_name in splits:
-        mat_file_path = os.path.join(output_dir, f"layer_{split_name}.mat")
-        
-        if not os.path.exists(mat_file_path):
-            print(f"File {mat_file_path} not found!")
-            continue
-            
-        try:
-            mat_data = sio.loadmat(mat_file_path)
-            db_struct = mat_data['dbStruct']
-            
-            num_db = db_struct['numImages'][0][0]
-            num_q = db_struct['numQueries'][0][0]
-            
-            total_db_images += num_db
-            total_query_images += num_q
-            
-            print(f"\n{split_name.upper()} SPLIT ({mat_file_path}):")
-            print(f"  whichSet: {db_struct['whichSet'][0]}")
-            print(f"  numImages (db): {num_db}")
-            print(f"  numQueries: {num_q}")
-            print(f"  Total: {num_db + num_q}")
-            print(f"  posDistThr: {db_struct['posDistThr'][0][0]}")
-            print(f"  dbImageFns shape: {db_struct['dbImageFns'].shape}")
-            print(f"  utmDb shape: {db_struct['utmDb'].shape}")
-            print(f"  qImageFns shape: {db_struct['qImageFns'].shape}")
-            print(f"  utmQ shape: {db_struct['utmQ'].shape}")
-            
-            # Show first few elements as examples
-            if len(db_struct['dbImageFns']) > 0:
-                print(f"  First db image: {db_struct['dbImageFns'][0, 0]}")
-            if len(db_struct['qImageFns']) > 0:
-                print(f"  First query image: {db_struct['qImageFns'][0, 0]}")
-                
-        except Exception as e:
-            print(f"Error verifying {mat_file_path}: {e}")
-    
-    print(f"\nSUMMARY:")
-    print(f"Total database images across all splits: {total_db_images}")
-    print(f"Total query images across all splits: {total_query_images}")
-    print(f"Grand total: {total_db_images + total_query_images}")
-
-def check_no_overlap(output_dir="."):
-    """
-    Verify that there's no overlap between train/val/test splits.
-    """
-    splits = ['train', 'val', 'test']
-    all_images = {}
-    
-    print("\n" + "="*50)
-    print("CHECKING FOR OVERLAP BETWEEN SPLITS")
-    print("="*50)
-    
-    for split_name in splits:
-        mat_file_path = os.path.join(output_dir, f"layer_{split_name}.mat")
-        
-        if not os.path.exists(mat_file_path):
-            continue
-            
-        try:
-            mat_data = sio.loadmat(mat_file_path)
-            db_struct = mat_data['dbStruct']
-            
-            # Collect all images from this split
-            db_images = [str(img) for img in db_struct['dbImageFns'].flatten()]
-            q_images = [str(img) for img in db_struct['qImageFns'].flatten()]
-            
-            all_images[split_name] = set(db_images + q_images)
-            print(f"{split_name}: {len(all_images[split_name])} unique images")
-            
-        except Exception as e:
-            print(f"Error reading {mat_file_path}: {e}")
-    
-    # Check for overlaps
-    if len(all_images) == 3:
-        train_val_overlap = all_images['train'] & all_images['val']
-        train_test_overlap = all_images['train'] & all_images['test']
-        val_test_overlap = all_images['val'] & all_images['test']
-        
-        print(f"\nOverlap analysis:")
-        print(f"Train-Val overlap: {len(train_val_overlap)} images")
-        print(f"Train-Test overlap: {len(train_test_overlap)} images")
-        print(f"Val-Test overlap: {len(val_test_overlap)} images")
-        
-        if len(train_val_overlap) == 0 and len(train_test_overlap) == 0 and len(val_test_overlap) == 0:
-            print("✓ NO OVERLAP - Splits are properly separated!")
-        else:
-            print("⚠ WARNING: Overlaps detected between splits!")
-
 # Example usage
 if __name__ == "__main__":
     # Example usage - replace with your actual file paths
@@ -224,8 +122,6 @@ if __name__ == "__main__":
     if os.path.exists(input_file):
         try:
             create_mat_files(input_file, output_directory)
-            verify_mat_files(output_directory)
-            check_no_overlap(output_directory)
         except Exception as e:
             print(f"Error: {e}")
     else:
